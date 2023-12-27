@@ -8,17 +8,20 @@ using UnityEngine;
  */
 public class PlayerShoot : NetworkBehaviour
 {
-    public GameObject bulletPrefab; 
+   public GameObject bulletPrefab; 
+   private float cooldown = 1f;
    void Update()
     {
        if (IsLocalPlayer)
         {
             //if the player clicks the left mouse button, tell server to shoot
-           if (Input.GetMouseButtonDown(0))
-            {
+           if (Input.GetMouseButtonDown(0) && cooldown>0.3f)
+           {
                ShootServerRpc();
+                cooldown = 0f;
            }
        }
+       cooldown += Time.deltaTime;
    }
 
     [ServerRpc]

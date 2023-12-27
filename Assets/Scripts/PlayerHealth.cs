@@ -12,28 +12,19 @@ public class PlayerHealth : NetworkBehaviour
 {
     private int HP = 100;
 
-    //The server detects collision and tells the client to take damage
-    private void OnTriggerEnter(Collider other)
+    //this function gets called on the server side when the player gets hit by a bullet
+    
+    public void TakeDMG()
     {
-        if(!IsServer)
+        if (!IsServer)
             return;
 
-        if (other.CompareTag("Bullet")) 
-        {
-            TakeDMGClientRpc();
-        }
-    }
-
-    //take damage on the client side
-    [ClientRpc]
-    private void TakeDMGClientRpc()
-    {
-        HP -= 30;
-        Console.WriteLine("damage taken");
+        HP -= 20;
+        Debug.Log("Player took damage");
         if (HP <= 0)
         {
-            Console.WriteLine("You are dead");
-            Destroy(gameObject);
+            Debug.Log("Player died");
+            NetworkObject.Despawn(gameObject);
         }
     }
 }
