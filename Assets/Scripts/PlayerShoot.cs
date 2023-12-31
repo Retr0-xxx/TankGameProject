@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 /*
  * This script handles all the shooting behaviours
@@ -9,15 +10,17 @@ using UnityEngine;
 public class PlayerShoot : NetworkBehaviour
 {
    public GameObject bulletPrefab; 
+   public GameObject fake_bulletPrefab;
    private float cooldown = 1f;
    void Update()
     {
-       if (IsLocalPlayer)
+       if (IsLocalPlayer && IsClient)
         {
             //if the player clicks the left mouse button, tell server to shoot
            if (Input.GetMouseButtonDown(0) && cooldown>0.3f)
            {
                ShootServerRpc();
+             Instantiate(fake_bulletPrefab, transform.position + transform.forward, transform.rotation);
                 cooldown = 0f;
            }
        }

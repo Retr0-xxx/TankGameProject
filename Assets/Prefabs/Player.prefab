@@ -229,6 +229,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 565805484810195340, guid: 591ae20f7693d754883f3f502159ae07,
     type: 3}
+  fake_bulletPrefab: {fileID: 7319918372119868628, guid: c64ab17a40e4d884eabf226aecbcbac2,
+    type: 3}
 --- !u!114 &1921834746545366928
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -242,6 +244,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
+  CameraPrefab: {fileID: 3010680681016617946, guid: 86d98faa1c1d0c845b3a17abf1612426,
+    type: 3}
 --- !u!65 &3578627899367146465
 BoxCollider:
   m_ObjectHideFlags: 0

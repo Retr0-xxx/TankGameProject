@@ -12,12 +12,13 @@ using UnityEngine;
 public class PlayerController : NetworkBehaviour
 {
     public float speed = 1f;
+    public GameObject CameraPrefab;
   
-    void Update()
+    void FixedUpdate()
     {
         //implement server authority for player movement
         //if it's the client, request the server to move the player
-        if (IsLocalPlayer)
+        if (IsLocalPlayer && IsClient)
         {
             float horizontal = Input.GetAxis("Horizontal");
             float vertical = Input.GetAxis("Vertical");
@@ -32,25 +33,36 @@ public class PlayerController : NetworkBehaviour
      * @param horizontal: the horizontal axis of the player
      * @param vertical: the vertical axis of the player
      */
+    private void Start()
+    {
+        //Instantiate a camera for the player
+        //The camera is only visible to the local player, not shared on the network
+        if (IsLocalPlayer && IsClient) 
+        {
+            GameObject camera = Instantiate(CameraPrefab, transform.position + Vector3.up * 10, Quaternion.identity);
+            camera.GetComponent<Camera>().setTarget(transform);
+        };
+    }
     private void Move(float horizontal,float vertical )
     {
-        Vector3 movement = transform.forward * Time.fixedDeltaTime * speed * vertical / 10f;
+        float timeStep = Time.fixedDeltaTime;
+        Vector3 movement = transform.forward * timeStep * speed * vertical;
         bool canMove = !Physics.BoxCast(transform.position, transform.localScale, movement, Quaternion.identity, movement.magnitude);
         if (canMove)
         {
             if (vertical > 0f)
             {
-                transform.Rotate(Vector3.up, horizontal / 2);
+                transform.Rotate(Vector3.up, horizontal*2);
                 transform.Translate(movement, Space.World);
             }
             else if (vertical < 0f)
             {
-                transform.Rotate(Vector3.up, -horizontal / 2);
+                transform.Rotate(Vector3.up, -horizontal*2);
                 transform.Translate(movement / 2, Space.World);
             }
             else
             {
-                transform.Rotate(Vector3.up, horizontal/2);
+                transform.Rotate(Vector3.up, horizontal*2);
             }
         }
     }        

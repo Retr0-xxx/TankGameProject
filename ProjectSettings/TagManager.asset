@@ -5,14 +5,15 @@ TagManager:
   serializedVersion: 2
   tags:
   - Bullet
+  - FakeBullet
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Bullet
   - Water
   - UI
-  - 
+  - FakeBullet
   - 
   - 
   - 

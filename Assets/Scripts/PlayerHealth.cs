@@ -13,7 +13,7 @@ public class PlayerHealth : NetworkBehaviour
     private int HP = 100;
 
     //this function gets called on the server side when the player gets hit by a bullet
-    
+    //player only takes damage on the server side
     public void TakeDMG()
     {
         if (!IsServer)
