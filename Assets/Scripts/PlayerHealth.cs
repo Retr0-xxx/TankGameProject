@@ -14,6 +14,22 @@ public class PlayerHealth : NetworkBehaviour
 
     //this function gets called on the server side when the player gets hit by a bullet
     //player only takes damage on the server side
+
+    //getHP is called from the client side
+    //logic here: get HP calls hpServerRpc, which calls hpClientRpc
+    //            passing the HP value on the server side to the client side
+    public int getHP()
+    {
+         hpServerRpc();
+         return HP;
+    }
+    [ServerRpc(RequireOwnership =false)]
+    private void hpServerRpc() { hpClientRpc(HP); }
+
+    [ClientRpc]
+    private void hpClientRpc(int HP) { this.HP = HP;}
+
+
     public void TakeDMG()
     {
         if (!IsServer)

@@ -9,7 +9,8 @@ using Unity.Netcode;
  */
 public class Camera : MonoBehaviour
 {
-
+    public Vector3 offset;
+    public Vector3 rotation;
     private Transform target;
     //target is where the camera should look at
     //it should be set when the camera is instantiated
@@ -21,7 +22,7 @@ public class Camera : MonoBehaviour
     //follow the target and look at it
     void FixedUpdate()
     {
-        transform.position = Vector3.Lerp(transform.position, target.position + Vector3.up * 10, Time.fixedDeltaTime*5f);
-        transform.rotation = Quaternion.Euler(90, 0, 0);
+        transform.position = Vector3.Lerp(transform.position, target.position + offset, Time.fixedDeltaTime*5f);
+        transform.rotation = Quaternion.Euler(rotation);
     }
 }

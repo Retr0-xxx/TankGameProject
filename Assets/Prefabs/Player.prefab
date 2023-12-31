@@ -124,7 +124,7 @@ GameObject:
   - component: {fileID: -6243814311600970416}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -245,6 +245,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   CameraPrefab: {fileID: 3010680681016617946, guid: 86d98faa1c1d0c845b3a17abf1612426,
+    type: 3}
+  healthBarPrefab: {fileID: 5816180418824941075, guid: eb09cc46b097c514cb8d694603374bfa,
     type: 3}
 --- !u!65 &3578627899367146465
 BoxCollider:

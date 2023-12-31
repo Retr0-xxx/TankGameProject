@@ -20,7 +20,7 @@ public class PlayerShoot : NetworkBehaviour
            if (Input.GetMouseButtonDown(0) && cooldown>0.3f)
            {
                ShootServerRpc();
-             Instantiate(fake_bulletPrefab, transform.position + transform.forward, transform.rotation);
+               Instantiate(fake_bulletPrefab, transform.position + transform.forward, transform.rotation);
                 cooldown = 0f;
            }
        }
