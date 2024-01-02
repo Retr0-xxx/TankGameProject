@@ -26,9 +26,12 @@ public class PlayerController : NetworkBehaviour
         //if it's the client, request the server to move the player
         if (IsLocalPlayer && IsClient)
         {
-            float horizontal = Input.GetAxis("Horizontal");
-            float vertical = Input.GetAxis("Vertical");
-            MoveServerRpc(horizontal, vertical);
+            if (!InputManager.Instance.isControlDisabled.Value)
+            {
+                float horizontal = Input.GetAxis("Horizontal");
+                float vertical = Input.GetAxis("Vertical");
+                MoveServerRpc(horizontal, vertical);
+            }
 
             UpdateHealth();
         }
@@ -53,7 +56,6 @@ public class PlayerController : NetworkBehaviour
 
             //get a list of all the players in the game
             List<GameObject> players = GameObject.FindGameObjectsWithTag("Player").ToList();
-            Debug.Log(players.Count);
             //Instantiate a health bar for all players
             //get both scripts for heath bar and player health
             //store them in a dictionary

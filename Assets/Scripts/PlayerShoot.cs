@@ -17,8 +17,9 @@ public class PlayerShoot : NetworkBehaviour
        if (IsLocalPlayer && IsClient)
         {
             //if the player clicks the left mouse button, tell server to shoot
-           if (Input.GetMouseButtonDown(0) && cooldown>0.3f)
+           if (Input.GetMouseButtonDown(0) && cooldown>0.3f && !InputManager.Instance.isControlDisabled.Value)
            {
+             
                ShootServerRpc();
                Instantiate(fake_bulletPrefab, transform.position + transform.forward, transform.rotation);
                 cooldown = 0f;
