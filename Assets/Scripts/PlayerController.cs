@@ -19,6 +19,7 @@ public class PlayerController : NetworkBehaviour
     private PlayerHealth playerHealth;
     private HealthBar healthBar;
     private Dictionary<PlayerHealth,HealthBar> playerHealthMap;
+    private GameObject kamera;
 
     void FixedUpdate()
     {
@@ -51,26 +52,12 @@ public class PlayerController : NetworkBehaviour
         {
             //Instantiate a camera for the player
             //The camera is only visible to the local player, not shared on the network
-            GameObject kamera = Instantiate(CameraPrefab, transform.position + Vector3.up * 10, Quaternion.identity);
+            kamera = Instantiate(CameraPrefab, transform.position + Vector3.up * 10, Quaternion.identity);
             kamera.GetComponent<Camera>().setTarget(transform);
-
-            //get a list of all the players in the game
-            List<GameObject> players = GameObject.FindGameObjectsWithTag("Player").ToList();
-            //Instantiate a health bar for all players
-            //get both scripts for heath bar and player health
-            //store them in a dictionary
-            //exhange information of HP between them during update
-            playerHealthMap = new Dictionary<PlayerHealth, HealthBar> { };
-            foreach (GameObject player in players)
-            {
-                GameObject healthBarObj = Instantiate(healthBarPrefab,player.transform);
-                playerHealth = player.GetComponent<PlayerHealth>();
-                healthBar = healthBarObj.GetComponent<HealthBar>();
-                int HP = playerHealth.getHP();
-                healthBar.setHP(HP);
-                healthBar.setCam(kamera.transform);
-                playerHealthMap.Add(playerHealth,healthBar);
-            }
+            //generate a health bar for all players at the start of the game
+            generateHealthBarForall();
+            //listen to the event of counting down and start generating health bar
+            StateManager.Instance.onCountDownStart += onCountStartHPbar;
         }
     }
 
@@ -81,6 +68,33 @@ public class PlayerController : NetworkBehaviour
           int HP = entry.Key.getHP(); 
           entry.Value.setHP(HP);
       }
+    }
+
+    //listen to the event of counting down and start generating health bar
+    private void onCountStartHPbar(object sender, EventArgs e)
+    {
+       generateHealthBarForall();
+    }
+
+    public void generateHealthBarForall() 
+    {
+        //get a list of all the players in the game
+        List<GameObject> players = GameObject.FindGameObjectsWithTag("Player").ToList();
+        //Instantiate a health bar for all players
+        //get both scripts for heath bar and player health
+        //store them in a dictionary
+        //exhange information of HP between them during update
+        playerHealthMap = new Dictionary<PlayerHealth, HealthBar> { };
+        foreach (GameObject player in players)
+        {
+            GameObject healthBarObj = Instantiate(healthBarPrefab, player.transform);
+            playerHealth = player.GetComponent<PlayerHealth>();
+            healthBar = healthBarObj.GetComponent<HealthBar>();
+            int HP = playerHealth.getHP();
+            healthBar.setHP(HP);
+            healthBar.setCam(kamera.transform);
+            playerHealthMap.Add(playerHealth, healthBar);
+        }
     }
 
     private void Move(float horizontal,float vertical )

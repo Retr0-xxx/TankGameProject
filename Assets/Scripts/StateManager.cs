@@ -9,9 +9,12 @@ public class StateManager : NetworkBehaviour
 
     private Dictionary<ulong, bool> ReadyClientDic;
     public bool isLocalPlayerReady;
+    //event handlers for StateManager
     public event EventHandler onStateChange;
     public event EventHandler onCountDownStart;
+    public event EventHandler onInGame;
     public event EventHandler onLocalPlayerReadyChanged;
+    //any modification to the state will automatically fire a onStateChange event
     public NetworkVariable<State> state = new NetworkVariable<State>(State.waitStart);
 
     void Awake()
@@ -20,6 +23,7 @@ public class StateManager : NetworkBehaviour
         isLocalPlayerReady = false;
         ReadyClientDic = new Dictionary<ulong, bool>();
         onStateChange += onStageChangeMethod;
+        onCountDownStart += onCountStartMethod;
 
     }
     
@@ -27,7 +31,7 @@ public class StateManager : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         state.OnValueChanged += (previousValue, newValue) => onStateChange?.Invoke(this, EventArgs.Empty);
-        //invoke the event once disable player control
+        //invoke the event once to disable player control
         onStateChange?.Invoke(this, EventArgs.Empty);
     }
 
@@ -41,7 +45,7 @@ public class StateManager : NetworkBehaviour
 
 
     
-
+    //method is called each time a player press space
     //on the serverside, store the true ready state of all players in a dictionary
     //loop through the dictionary, if all players are ready, start the countdown
     [ServerRpc(RequireOwnership = false)]
@@ -64,10 +68,14 @@ public class StateManager : NetworkBehaviour
                 readyCount++;
             }
         }
-        if (allReady)
+        if (allReady && readyCount!=1)
         {
             state.Value = State.countDownStart;
             Debug.Log("All Players Ready, Starting Count Down...");
+        }
+        else
+        {
+            Debug.Log("you need at least two players to start the game!");
         }
         Debug.Log("Player with clientID " + id + "is ready");
         Debug.Log(readyCount+" Players Ready //"+notReadyCount+" Players Not Ready");
@@ -84,9 +92,10 @@ public class StateManager : NetworkBehaviour
                 break;
             case State.countDownStart:
                 onCountDownStart?.Invoke(this, EventArgs.Empty);
-                InputManager.Instance.isControlDisabled.Value = false;
+                InputManager.Instance.isControlDisabled.Value = true;
                 break;
             case State.inGame:
+                onInGame?.Invoke(this, EventArgs.Empty);
                 InputManager.Instance.isControlDisabled.Value = false;
                 break;
             case State.gameOver:
@@ -97,7 +106,7 @@ public class StateManager : NetworkBehaviour
         }
     }
 
-    //if player press space, toggle ready, and send to server
+    //if player press space, toggle ready, and send to server, fired the player ready event
     private void checkPlayerReady() 
     {
         
@@ -118,9 +127,29 @@ public class StateManager : NetworkBehaviour
         }
     }
 
+    //listening to the onCountDownStart event, start a countdown coroutine
+    private void onCountStartMethod(object sender, EventArgs e)
+    {
+        StartCoroutine(countDown());
+    }
+    
+
     private void Update()
     {
         checkPlayerReady();
+    }
+
+    //countdown coroutine, change the state to inGame when countdown finishes
+    IEnumerator countDown()
+    {
+        int count = 3;
+        while (count > 0)
+        {
+            Debug.Log(count);
+            yield return new WaitForSeconds(1);
+            count--;
+        }
+        state.Value = State.inGame;
     }
 
 

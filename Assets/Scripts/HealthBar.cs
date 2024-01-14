@@ -18,6 +18,7 @@ public class HealthBar : MonoBehaviour
         slider = GetComponentInChildren<Slider>();
     }
 
+    //setHP is called by the player object
     public void setHP(int HPin) 
     {
         HP =  HPin;
